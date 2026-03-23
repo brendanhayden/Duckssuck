@@ -92,11 +92,18 @@ background: var(–paper);
 color: var(–ink);
 padding: 40px 44px;
 position: relative;
+isolation: isolate;
 box-shadow:
 0 0 0 1px var(–paper-dark),
 0 4px 40px rgba(0,0,0,0.6),
 inset 0 0 80px rgba(0,0,0,0.04);
 animation: fadeIn 0.8s ease 0.3s both;
+}
+
+/* ensure all direct content sits above pseudo-elements */
+.dossier > * {
+position: relative;
+z-index: 1;
 }
 
 /* paper texture lines */
