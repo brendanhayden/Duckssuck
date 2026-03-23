@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLASSIFIED — OPERATION QUACK — FAILED</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–red: #cc0000;
+–red-dark: #8a0000;
+–amber: #f5a500;
+–amber-dim: #b07a00;
+–green: #00aa44;
+–paper: #e8e0cc;
+–paper-dark: #cfc7b0;
+–ink: #1a1008;
+–ink-light: #3a2a10;
+–stamp-red: #b80000;
+}
+
+html, body {
+min-height: 100vh;
+background: #1a1208;
+color: var(–ink);
+font-family: ‘Courier Prime’, monospace;
+}
+
+/* ── Scanline overlay ── */
+body::before {
+content: ‘’;
+position: fixed; inset: 0; z-index: 100;
+background: repeating-linear-gradient(
+0deg,
+transparent,
+transparent 2px,
+rgba(0,0,0,0.07) 2px,
+rgba(0,0,0,0.07) 4px
+);
+pointer-events: none;
+}
+
+/* ── Amber terminal flicker ── */
+body::after {
+content: ‘’;
+position: fixed; inset: 0; z-index: 99;
+background: radial-gradient(ellipse at center, rgba(245,165,0,0.04) 0%, transparent 70%);
+pointer-events: none;
+animation: flicker 0.15s infinite;
+}
+@keyframes flicker {
+0%,100% { opacity: 1; }
+50% { opacity: 0.95; }
+}
+
+/* ── Terminal wrapper ── */
+.terminal {
+max-width: 780px;
+margin: 0 auto;
+padding: 20px;
+min-height: 100vh;
+}
+
+/* ── Top bar ── */
+.topbar {
+display: flex; justify-content: space-between; align-items: center;
+border-bottom: 1px solid var(–amber-dim);
+padding-bottom: 8px;
+margin-bottom: 20px;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.65rem;
+color: var(–amber-dim);
+animation: fadeIn 0.5s ease;
+}
+
+.status-dot {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: var(–red);
+display: inline-block;
+margin-right: 6px;
+animation: blink 1.2s step-start infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* ── Document / paper ── */
+.dossier {
+background: var(–paper);
+color: var(–ink);
+padding: 40px 44px;
+position: relative;
+box-shadow:
+0 0 0 1px var(–paper-dark),
+0 4px 40px rgba(0,0,0,0.6),
+inset 0 0 80px rgba(0,0,0,0.04);
+animation: fadeIn 0.8s ease 0.3s both;
+}
+
+/* paper texture lines */
+.dossier::before {
+content: ‘’;
+position: absolute; inset: 0;
+background: repeating-linear-gradient(
+0deg,
+transparent,
+transparent 27px,
+rgba(0,0,0,0.05) 27px,
+rgba(0,0,0,0.05) 28px
+);
+pointer-events: none;
+}
+
+/* coffee stain decoration */
+.dossier::after {
+content: ‘’;
+position: absolute;
+bottom: 80px; right: 30px;
+width: 90px; height: 90px;
+border-radius: 50%;
+border: 8px solid rgba(100,60,10,0.12);
+box-shadow: inset 0 0 0 4px rgba(100,60,10,0.06);
+pointer-events: none;
+}
+
+/* ── Header section ── */
+.doc-header {
+text-align: center;
+border-bottom: 2px solid var(–ink-light);
+padding-bottom: 18px;
+margin-bottom: 24px;
+position: relative;
+}
+
+.agency-name {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.6rem;
+letter-spacing: 0.4em;
+text-transform: uppercase;
+color: var(–ink-light);
+opacity: 0.7;
+}
+
+.doc-title {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+font-weight: 700;
+letter-spacing: 0.15em;
+margin: 10px 0 4px;
+color: var(–ink);
+}
+
+.op-name {
+font-size: 0.75rem;
+letter-spacing: 0.3em;
+color: var(–ink-light);
+font-style: italic;
+}
+
+/* ── FAILED STAMP ── */
+.stamp {
+position: absolute;
+top: -10px; right: -10px;
+transform: rotate(-12deg);
+border: 4px solid var(–stamp-red);
+color: var(–stamp-red);
+font-family: ‘Share Tech Mono’, monospace;
+font-size: clamp(1.4rem, 5vw, 2.2rem);
+font-weight: 700;
+letter-spacing: 0.15em;
+padding: 4px 14px;
+opacity: 0.88;
+text-shadow: 1px 1px 0 rgba(180,0,0,0.3);
+animation: stampIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.4s both;
+}
+@keyframes stampIn {
+from { transform: rotate(-12deg) scale(3); opacity: 0; }
+to { transform: rotate(-12deg) scale(1); opacity: 0.88; }
+}
+
+/* ── Duck agent photo placeholder ── */
+.agent-section {
+display: flex; gap: 24px; align-items: flex-start;
+margin-bottom: 24px;
+position: relative;
+}
+
+.duck-id {
+flex-shrink: 0;
+width: 110px;
+border: 2px solid var(–ink-light);
+background: #d0c8b4;
+display: flex; flex-direction: column; align-items: center;
+padding: 10px 8px 6px;
+position: relative;
+}
+
+.duck-svg {
+width: 80px;
+}
+
+.id-label {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.5rem;
+letter-spacing: 0.2em;
+margin-top: 8px;
+opacity: 0.6;
+}
+
+/* ── Fields ── */
+.field-grid {
+flex: 1;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px 16px;
+}
+
+.field {
+border-bottom: 1px solid rgba(26,16,8,0.2);
+padding-bottom: 4px;
+}
+
+.field-label {
+font-size: 0.55rem;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+opacity: 0.5;
+display: block;
+font-family: ‘Share Tech Mono’, monospace;
+}
+
+.field-value {
+font-size: 0.82rem;
+font-weight: 700;
+display: block;
+margin-top: 1px;
+}
+
+.redacted {
+background: var(–ink);
+color: transparent;
+user-select: none;
+border-radius: 1px;
+padding: 0 3px;
+cursor: default;
+}
+.redacted:hover { color: var(–paper); transition: color 0.1s; }
+
+/* ── Report body ── */
+.report-section {
+margin-bottom: 20px;
+position: relative;
+}
+
+.section-title {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.6rem;
+letter-spacing: 0.35em;
+text-transform: uppercase;
+border-bottom: 1px solid rgba(26,16,8,0.3);
+padding-bottom: 3px;
+margin-bottom: 10px;
+opacity: 0.7;
+}
+
+.report-text {
+font-size: 0.87rem;
+line-height: 1.85;
+color: var(–ink);
+}
+
+.report-text p + p { margin-top: 10px; }
+
+.highlight {
+background: rgba(245,165,0,0.25);
+padding: 0 2px;
+}
+
+/* ── Failure timeline ── */
+.timeline {
+margin: 14px 0;
+border-left: 2px solid rgba(26,16,8,0.2);
+padding-left: 16px;
+}
+
+.timeline-item {
+margin-bottom: 10px;
+font-size: 0.82rem;
+line-height: 1.5;
+position: relative;
+}
+
+.timeline-item::before {
+content: ‘’;
+position: absolute;
+left: -21px; top: 6px;
+width: 8px; height: 8px;
+border-radius: 50%;
+background: var(–ink-light);
+opacity: 0.5;
+}
+
+.timeline-time {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.65rem;
+opacity: 0.5;
+display: block;
+letter-spacing: 0.1em;
+}
+
+/* ── Conclusion box ── */
+.conclusion {
+border: 2px solid var(–ink);
+padding: 14px 16px;
+margin-top: 20px;
+position: relative;
+background: rgba(0,0,0,0.04);
+}
+
+.conclusion-label {
+position: absolute;
+top: -10px; left: 12px;
+background: var(–paper);
+padding: 0 6px;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.58rem;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+opacity: 0.7;
+}
+
+.conclusion p {
+font-size: 0.87rem;
+line-height: 1.7;
+}
+
+/* ── Signature line ── */
+.signature-line {
+display: flex; justify-content: space-between; align-items: flex-end;
+margin-top: 32px;
+border-top: 1px solid rgba(26,16,8,0.2);
+padding-top: 16px;
+font-size: 0.72rem;
+opacity: 0.6;
+}
+
+.sig-block { line-height: 1.6; }
+
+.sig-name {
+font-weight: 700;
+font-size: 0.8rem;
+opacity: 1;
+text-decoration: underline;
+text-decoration-style: wavy;
+text-underline-offset: 3px;
+}
+
+/* ── Footnote / terminal output ── */
+.terminal-footer {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.65rem;
+color: var(–amber-dim);
+margin-top: 20px;
+padding-top: 12px;
+border-top: 1px solid rgba(245,165,0,0.2);
+animation: fadeIn 1s ease 2s both;
+line-height: 2;
+}
+
+.terminal-footer .cursor {
+display: inline-block;
+width: 8px; height: 12px;
+background: var(–amber);
+vertical-align: bottom;
+animation: blink 1s step-start infinite;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+/* Classification bars */
+.classify-bar {
+background: var(–red-dark);
+color: #ffcccc;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.6rem;
+letter-spacing: 0.5em;
+text-align: center;
+padding: 5px;
+margin-bottom: 0;
+}
+
+.classify-bar.bottom { margin-top: 0; margin-bottom: 20px; }
+
+</style>
+</head>
+<body>
+
+<div class="terminal">
+
+  <div class="topbar">
+    <span><span class="status-dot"></span> CONNECTION: SECURE TUNNEL — ENCRYPTION: QUACK-256</span>
+    <span>TERMINAL 7-BRAVO — WATERFOWL INTELLIGENCE DIVISION</span>
+  </div>
+
+  <div class="classify-bar">⚠ &nbsp; TOP SECRET / CLASSIFIED / DO NOT DISTRIBUTE &nbsp; ⚠</div>
+  <div class="classify-bar bottom" style="background: var(--red); font-size:0.5rem; letter-spacing:0.3em; padding:3px;">WATERFOWL INTELLIGENCE DIVISION — INTERNAL EYES ONLY</div>
+
+  <div class="dossier">
+
+```
+<div class="stamp">MISSION FAILED</div>
+
+<div class="doc-header">
+  <div class="agency-name">W.I.D. &nbsp;·&nbsp; Waterfowl Intelligence Division &nbsp;·&nbsp; Est. Pond 7</div>
+  <div class="doc-title">OPERATION QUACK DOMINATION</div>
+  <div class="op-name">After-Action Failure Report &nbsp;·&nbsp; Case #00743-DUCK</div>
+</div>
+
+<div class="agent-section">
+  <!-- Duck SVG agent portrait -->
+  <div class="duck-id">
+    <svg class="duck-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+      <!-- Spy hat -->
+      <rect x="28" y="20" width="44" height="6" rx="3" fill="#1a1a1a"/>
+      <rect x="34" y="8" width="32" height="16" rx="4" fill="#1a1a1a"/>
+      <!-- Hat band -->
+      <rect x="34" y="18" width="32" height="4" fill="#cc0000" opacity="0.7"/>
+
+      <!-- Body -->
+      <ellipse cx="50" cy="80" rx="28" ry="32" fill="#e8c840"/>
+      <!-- Spy trenchcoat -->
+      <path d="M22,65 Q18,90 22,108 L38,108 L38,75 Z" fill="#2a2a2a"/>
+      <path d="M78,65 Q82,90 78,108 L62,108 L62,75 Z" fill="#2a2a2a"/>
+      <!-- Coat collar -->
+      <path d="M38,70 L50,82 L62,70 L58,64 L50,72 L42,64 Z" fill="#3a3a3a"/>
+      <!-- Belt/gadget -->
+      <rect x="30" y="90" width="40" height="6" rx="2" fill="#3a3a3a"/>
+      <rect x="46" y="88" width="8" height="10" rx="1" fill="#cc0000" opacity="0.8"/>
+
+      <!-- Head -->
+      <ellipse cx="50" cy="42" rx="22" ry="20" fill="#e8c840"/>
+      <!-- Spy sunglasses -->
+      <rect x="30" y="38" width="16" height="9" rx="4" fill="#111"/>
+      <rect x="54" y="38" width="16" height="9" rx="4" fill="#111"/>
+      <line x1="46" y1="42" x2="54" y2="42" stroke="#555" stroke-width="2"/>
+      <!-- Reflection glint in glasses -->
+      <line x1="32" y1="40" x2="35" y2="40" stroke="white" stroke-width="1.5" opacity="0.5"/>
+      <line x1="56" y1="40" x2="59" y2="40" stroke="white" stroke-width="1.5" opacity="0.5"/>
+      <!-- Beak -->
+      <path d="M41,51 L50,56 L59,51 L53,49 L50,53 L47,49 Z" fill="#e07010"/>
+
+      <!-- Tiny earpiece -->
+      <circle cx="28" cy="44" r="3" fill="#1a1a1a" opacity="0.9"/>
+      <path d="M28,44 Q24,48 25,54" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+
+      <!-- Feet -->
+      <ellipse cx="38" cy="112" rx="12" ry="5" fill="#e07010"/>
+      <ellipse cx="62" cy="112" rx="12" ry="5" fill="#e07010"/>
+
+      <!-- Sad tear -->
+      <path d="M72,46 Q74,50 72,54" stroke="#6ac8f0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="72" cy="55" r="2" fill="#6ac8f0" opacity="0.8"/>
+    </svg>
+    <div class="id-label">AGENT: D. QUACKSWORTH</div>
+  </div>
+
+  <div class="field-grid">
+    <div class="field">
+      <span class="field-label">Agent Designation</span>
+      <span class="field-value">D. Quacksworth III</span>
+    </div>
+    <div class="field">
+      <span class="field-label">Clearance Level</span>
+      <span class="field-value">MALLARD-6 (Revoked)</span>
+    </div>
+    <div class="field">
+      <span class="field-label">Operation Name</span>
+      <span class="field-value">Quack Domination</span>
+    </div>
+    <div class="field">
+      <span class="field-label">Mission Status</span>
+      <span class="field-value" style="color:var(--red-dark); font-size:1rem;">■ CATASTROPHIC FAILURE</span>
+    </div>
+    <div class="field">
+      <span class="field-label">Objective</span>
+      <span class="field-value">World Domination</span>
+    </div>
+    <div class="field">
+      <span class="field-label">Worlds Dominated</span>
+      <span class="field-value">0 &nbsp;<span style="font-size:0.7rem;font-weight:400;opacity:0.6;">(zero. none. zilch.)</span></span>
+    </div>
+    <div class="field">
+      <span class="field-label">Handler</span>
+      <span class="field-value"><span class="redacted">AGENT MALLARD</span></span>
+    </div>
+    <div class="field">
+      <span class="field-label">Current Status</span>
+      <span class="field-value">Eating breadcrumbs in a park</span>
+    </div>
+  </div>
+</div>
+
+<div class="report-section">
+  <div class="section-title">▸ &nbsp; Incident Summary</div>
+  <div class="report-text">
+    <p>At <strong>08:47 hours</strong>, Agent Quacksworth initiated Phase 1 of Operation Quack Domination — a <span class="highlight">ten-year plan to infiltrate world governments</span> through a network of duck-shaped sleeper agents disguised as decorative pond ornaments. Phase 1 lasted approximately <strong>four minutes</strong> before catastrophic failure was declared.</p>
+    <p>The agent was discovered not by rival intelligence, advanced surveillance, or counter-espionage. He was discovered because he <span class="highlight">could not stop making quacking sounds during a silent infiltration sequence</span>. Security footage confirmed he also waddled directly through a laser grid he had been briefed on extensively.</p>
+  </div>
+</div>
+
+<div class="report-section">
+  <div class="section-title">▸ &nbsp; Timeline of Failure</div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <span class="timeline-time">08:47:00</span>
+      Operation commenced. Agent crossed perimeter fence successfully.
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-time">08:47:43</span>
+      Agent noticed a small pond near the facility. <span class="highlight">Took a 12-minute swim "for morale."</span> Mission clock now 12 minutes behind.
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-time">09:02:15</span>
+      Re-entered facility. Laser grid bypassed on first attempt. Agent celebrated by quacking loudly. Alarms triggered.
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-time">09:02:22</span>
+      Agent attempted to blend in by standing very still. <span class="highlight">This did not work. He is a duck.</span>
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-time">09:04:00</span>
+      Security personnel arrived. Agent attempted to negotiate by offering them stale bread he had stored in his trench coat pocket. They declined.
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-time">09:06:33</span>
+      Mission officially terminated. Agent escorted to nearest park. <span class="highlight">He seemed fine with this.</span>
+    </div>
+  </div>
+</div>
+
+<div class="report-section">
+  <div class="section-title">▸ &nbsp; Root Cause Analysis</div>
+  <div class="report-text">
+    <p>Preliminary assessment indicates the root cause of mission failure is, fundamentally, <strong>being a duck</strong>. Secondary contributing factors include: an inability to operate doorknobs, a briefcase that was actually just a loaf of bread, and the agent's insistence on wearing a trench coat that was <span class="highlight">visibly too large and smelled like pond water</span>.</p>
+    <p>The Waterfowl Intelligence Division notes this is the <strong>17th consecutive failed mission</strong> by Agent Quacksworth, and the <strong>43rd consecutive failed mission</strong> for the division as a whole since its founding in 1987. We remain, as ever, <span class="highlight">deeply committed to world domination</span> and will try again next Tuesday.</p>
+  </div>
+</div>
+
+<div class="conclusion">
+  <span class="conclusion-label">OFFICIAL CONCLUSION</span>
+  <p>Ducks are, definitively and by all measurable metrics, <strong>lame</strong>. The penguin ninja clans were not even involved in this failure. They didn't need to be. The ducks handled it themselves. This report has been filed under <em>"Yeah, that's about right"</em> and cross-referenced with every other report this division has ever produced. They all say the same thing.</p>
+</div>
+
+<div class="signature-line">
+  <div class="sig-block">
+    <div class="sig-name">Director B. Mallard-Worthington</div>
+    <div>Waterfowl Intelligence Division</div>
+    <div>Pond 7 Field Office, Undisclosed Lily Pad</div>
+  </div>
+  <div class="sig-block" style="text-align:right;">
+    <div>DATE: <span class="redacted">REDACTED</span></div>
+    <div>COPY: <span class="redacted">REDACTED</span></div>
+    <div style="margin-top:6px; font-size:0.6rem; opacity:0.5;">DO NOT LAMINATE</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="terminal-footer">
+    > SESSION LOG: duck_domination_attempt_#00743 — RESULT: FAILURE<br>
+    > COMPARISON TO PENGUIN NINJA OPS THIS YEAR: 0 failures vs 743 duck failures<br>
+    > RUNNING TOTAL OF WORLDS DOMINATED BY DUCKS: 0<br>
+    > <span class="cursor"></span>
+  </div>
+
+</div>
+</body>
+</html>
