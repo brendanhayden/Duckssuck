@@ -32,13 +32,13 @@ font-family: ‘Courier Prime’, monospace;
 /* ── Scanline overlay ── */
 body::before {
 content: ‘’;
-position: fixed; inset: 0; z-index: 100;
+position: fixed; inset: 0; z-index: 0;
 background: repeating-linear-gradient(
 0deg,
 transparent,
 transparent 2px,
-rgba(0,0,0,0.07) 2px,
-rgba(0,0,0,0.07) 4px
+rgba(0,0,0,0.04) 2px,
+rgba(0,0,0,0.04) 4px
 );
 pointer-events: none;
 }
@@ -88,41 +88,23 @@ animation: blink 1.2s step-start infinite;
 
 /* ── Document / paper ── */
 .dossier {
-background: var(–paper);
+background:
+linear-gradient(90deg, transparent 52px, rgba(180,0,0,0.3) 52px, rgba(180,0,0,0.3) 54px, transparent 54px),
+repeating-linear-gradient(
+transparent,
+transparent 27px,
+rgba(100,120,200,0.25) 27px,
+rgba(100,120,200,0.25) 28px
+),
+#e8e0cc;
 color: var(–ink);
 padding: 40px 44px;
 position: relative;
-isolation: isolate;
 box-shadow:
 0 0 0 1px var(–paper-dark),
 0 4px 40px rgba(0,0,0,0.6),
 inset 0 0 80px rgba(0,0,0,0.04);
 animation: fadeIn 0.8s ease 0.3s both;
-}
-
-/* ensure all direct content sits above pseudo-elements */
-.dossier > * {
-position: relative;
-z-index: 1;
-}
-
-/* paper texture lines */
-.dossier::before {
-content: ‘’;
-position: absolute; inset: 0;
-background:
-/* red margin line */
-linear-gradient(90deg, transparent 52px, rgba(180,0,0,0.25) 52px, rgba(180,0,0,0.25) 54px, transparent 54px),
-/* horizontal ruled lines */
-repeating-linear-gradient(
-0deg,
-transparent,
-transparent 27px,
-rgba(100,120,180,0.18) 27px,
-rgba(100,120,180,0.18) 28px
-);
-pointer-events: none;
-z-index: 0;
 }
 
 /* coffee stain decoration */
