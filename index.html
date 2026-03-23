@@ -103,14 +103,19 @@ animation: fadeIn 0.8s ease 0.3s both;
 .dossier::before {
 content: ‘’;
 position: absolute; inset: 0;
-background: repeating-linear-gradient(
+background:
+/* red margin line */
+linear-gradient(90deg, transparent 52px, rgba(180,0,0,0.25) 52px, rgba(180,0,0,0.25) 54px, transparent 54px),
+/* horizontal ruled lines */
+repeating-linear-gradient(
 0deg,
 transparent,
 transparent 27px,
-rgba(0,0,0,0.05) 27px,
-rgba(0,0,0,0.05) 28px
+rgba(100,120,180,0.18) 27px,
+rgba(100,120,180,0.18) 28px
 );
 pointer-events: none;
+z-index: 0;
 }
 
 /* coffee stain decoration */
